@@ -3,6 +3,7 @@
 #include <PubSubClient.h>
 #include <Thread.h>
 #include <StaticThreadController.h>
+#include "mbedtls/aes.h"
 
 String clientId = "Radlogger-";
 
@@ -49,10 +50,9 @@ void threadPublishCountsCallback()
 {
   digitalWrite(2, HIGH);
 
-  Serial.println("threadPublishCountsCallback:\t" + String(millis() / 1000) + "\tcounts: " + String(counts[0]));
-
   String _payload = String(counts[0]);
 
+  Serial.println("threadPublishCountsCallback:\t" + String(millis() / 1000) + "\tcounts: " + _payload);
   client.publish("sensors/rads/counts", _payload.c_str());
 
   counts[1] += counts[0];
@@ -63,11 +63,11 @@ void threadPublishDoseCallback()
 {
   digitalWrite(2, HIGH);
 
-  Serial.println("threadPublishDoseCallback:\t" + String(millis() / 1000) + "\tdose: " + String(counts[1] / (float)tubeIndex) + " uSv/h");
+  String _payload = String(counts[1] / (float)tubeIndex);
 
-  String _payload = String(counts[1] / (float)tubeIndex); // + " uSv/h";
-
+  Serial.println("threadPublishDoseCallback:\t" + String(millis() / 1000) + "\tdose: " + _payload + " uSv/h");
   client.publish("sensors/rads/dose", _payload.c_str());
+
   counts[1] = 0;
 }
 
@@ -128,8 +128,4 @@ void loop()
   }
 
   threadController.run();
-
-  // randomness generator
-  /*unsigned int _test = random(2);
-  if (_test == 0) counts[0]++;*/
 }
