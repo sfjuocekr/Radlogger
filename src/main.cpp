@@ -3,7 +3,6 @@
 #include <PubSubClient.h>
 #include <Thread.h>
 #include <StaticThreadController.h>
-#include "mbedtls/aes.h"
 
 String clientId = "Radlogger-";
 
